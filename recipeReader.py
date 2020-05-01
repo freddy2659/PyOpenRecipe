@@ -351,7 +351,7 @@ class Recipe:
         self._dict['steps'] = parse_steps(src)
 
         # X-<field>
-        self._dict['x'] = parse_x_fields(cfg)
+        self._dict.update(parse_x_fields(cfg))
         return
 
     def contents(self):
