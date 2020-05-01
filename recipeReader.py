@@ -1,6 +1,7 @@
 # pip install pyyaml
 import yaml
 import uuid
+from urllib.parse import quote
 
 
 def parse_recipe_name(src, defaults):
@@ -221,8 +222,8 @@ def parse_source_authors(src, defaults):
     return out
 
 
-def parse_source_url(src, defaults):
-    out = defaults['source_url']
+def parse_source_url(src, defaults, recipe_name):
+    out = f"{defaults['website']}/{quote(recipe_name)}/{defaults['uuid']}"
     if src is not None and src != 'None':
         # No need to parse this
         out = src
@@ -286,13 +287,12 @@ class Recipe:
         # Default values
         defaults = dict()
         defaults['yields'] = {'unit': 'servings'}
-        defaults['website'] = "example.recipes.com"
+        defaults['website'] = "https://example.recipes.com"
         defaults['software_package'] = "PyOpenRecipe"
         defaults['source_authors'] = ""
         defaults['uuid'] = str(uuid.uuid4())
         defaults['recipe_uuid'] = "%s-%s" % (defaults['software_package'], defaults['uuid'])
         defaults['recipe_name'] = 'untitled'
-        defaults['source_url'] = "https://%s/%s/%s/" % (defaults['website'], defaults['recipe_name'], defaults['uuid'])
         defaults['unit'] = 'each'
         defaults['amount'] = 1
 
@@ -341,7 +341,7 @@ class Recipe:
 
         # Source URL
         src = cfg.pop('source_url', None)
-        self._dict['source_url'] = parse_source_url(src, defaults)
+        self._dict['source_url'] = parse_source_url(src, defaults, self._dict['recipe_name'])
 
         # Steps
         src = cfg.pop('steps', None)
