@@ -14,7 +14,9 @@ def parse_recipe_name(src, defaults):
 
 def parse_oven_fan(src):
     if src is not None:
-        if src.lower() == 'high':
+        if not src:
+            out = 'Off'
+        elif src.lower() == 'high':
             out = 'High'
         elif src.lower() == 'low':
             out = 'Low'
@@ -374,7 +376,7 @@ def save_file(recipe, filename):
 
 
 if __name__ == "__main__":
-    test = "test/test1.orf"
+    test = "samples/bananaBread.orf"
     test2 = "test/test2.orf"
     r = load_file(test)
     save_file(r, test2)
