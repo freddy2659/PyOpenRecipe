@@ -4,7 +4,7 @@ import uuid
 
 
 def parse_recipe_name(src, defaults):
-    if src is not None:
+    if src is not None and src != 'None':
         out = src
     else:
         out = defaults['recipe_name']
@@ -13,7 +13,7 @@ def parse_recipe_name(src, defaults):
 
 
 def parse_oven_fan(src):
-    if src is not None:
+    if src is not None and src != 'None':
         if not src:
             out = 'Off'
         elif src.lower() == 'high':
@@ -32,7 +32,7 @@ def parse_oven_fan(src):
 
 def parse_oven_temp(src_list):
     out = []
-    if src_list is not None:
+    if src_list is not None and src_list != 'None':
         if len(src_list) > 1:
             print("Warning: Multiple oven temperatures detected.")
         for src in src_list:
@@ -65,9 +65,16 @@ def parse_oven_temp(src_list):
     return out
 
 
+def parse_oven_time(src):
+    out = ""
+    if src is not None and src != 'None':
+        out = src
+    return out
+
+
 def parse_yields(src, defaults):
     out = []
-    if src is not None:
+    if src is not None and src != 'None':
         for lst in src:
             for key, value in lst.items():
                 # Amount
@@ -89,7 +96,7 @@ def parse_yields(src, defaults):
 
 def parse_ingredients(src, defaults, expected_amount_size, substitution=False):
     out = []
-    if src is not None:
+    if src is not None and src != 'None':
         for ingredient_dict in src:
             ingredient_item = dict()
             for ingredient, details in ingredient_dict.items():
@@ -168,7 +175,7 @@ def parse_ingredients(src, defaults, expected_amount_size, substitution=False):
 
 def parse_notes(src):
     out = []
-    if src is not None:
+    if src is not None and src != 'None':
         # No need to parse them, just replace the list if there are any
         out = src
     return out
@@ -176,7 +183,7 @@ def parse_notes(src):
 
 def parse_recipe_uuid(src, defaults):
     out = defaults['recipe_uuid']
-    if src is not None:
+    if src is not None and src != 'None':
         out = src
     else:
         print("Warning: no UUID provided, using %s" % out)
@@ -185,7 +192,7 @@ def parse_recipe_uuid(src, defaults):
 
 def parse_source_book(src):
     out = dict()
-    if src is not None:
+    if src is not None and src != 'None':
         if 'authors' in src:
             out['authors'] = src.pop('authors')
         if 'title' in src:
@@ -195,7 +202,7 @@ def parse_source_book(src):
         if 'notes' in src:
             out['notes'] = src.pop('notes')
         # If src not empty, the rest are x-fields
-        for field, value in src:
+        for field, value in src.items():
             if field.startswith('x-'):
                 out[field] = value
             else:
@@ -206,7 +213,7 @@ def parse_source_book(src):
 
 def parse_source_authors(src, defaults):
     out = defaults['source_authors']
-    if src is not None:
+    if src is not None and src != 'None':
         # No need to parse this
         out = src
     else:
@@ -216,7 +223,7 @@ def parse_source_authors(src, defaults):
 
 def parse_source_url(src, defaults):
     out = defaults['source_url']
-    if src is not None:
+    if src is not None and src != 'None':
         # No need to parse this
         out = src
     else:
@@ -226,7 +233,7 @@ def parse_source_url(src, defaults):
 
 def parse_steps(src):
     out = []
-    if src is not None:
+    if src is not None and src != 'None':
         for step in src:
             this_step = {}
             if 'step' not in step:
@@ -257,8 +264,8 @@ def parse_steps(src):
 def parse_x_fields(src):
     # These fields are literally all the left over fields.
     out = dict()
-    if src is not None:
-        for field, value in src:
+    if src is not None and src != 'None':
+        for field, value in src.items():
             if field.startswith('x-'):
                 print("Warning: Recipe contained x-field '%s', it has been stored but not understood" % field)
                 out[field] = value
@@ -303,6 +310,10 @@ class Recipe:
         # Oven Temp
         src = cfg.pop('oven_temp', None)
         self._dict['oven_temp'] = parse_oven_temp(src)
+
+        # Oven Time
+        src = cfg.pop('oven_time', None)
+        self._dict['oven_time'] = parse_oven_time(src)
 
         # Yields
         src = cfg.pop('yields', None)
