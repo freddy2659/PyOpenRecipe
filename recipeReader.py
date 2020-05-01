@@ -1,6 +1,7 @@
 # pip install pyyaml
 import yaml
 import uuid
+from pathlib import Path
 from urllib.parse import quote
 
 
@@ -77,6 +78,7 @@ def parse_yields(src, defaults):
     out = []
     if src is not None and src != 'None':
         for lst in src:
+            this_yield = dict()
             for key, value in lst.items():
                 # Amount
                 try:
@@ -91,7 +93,8 @@ def parse_yields(src, defaults):
                 if key == "":
                     key = defaults['yields']['unit']
                     print("Warning: no yields unit, using %s" % key)
-                out.append({key: value})
+                this_yield[key] = value
+            out.append(this_yield)
     return out
 
 
@@ -218,7 +221,7 @@ def parse_source_authors(src, defaults):
         # No need to parse this
         out = src
     else:
-        print("Warning: no source author provided, using %s" % out)
+        print("Warning: no source author provided, using '%s'" % out)
     return out
 
 
@@ -387,7 +390,10 @@ def save_file(recipe, filename):
 
 
 if __name__ == "__main__":
-    test = "samples/bananaBread.orf"
-    test2 = "test/test2.orf"
-    r = load_file(test)
-    save_file(r, test2)
+    testDir = 'test/'
+    outDir = 'out/'
+    tests = ["test1.orf", "bananaBread.orf"]
+    for test in tests:
+        r = load_file(f"{testDir}{test}")
+        Path(outDir).mkdir(parents=True, exist_ok=True)
+        save_file(r, f"{outDir}{test}")
